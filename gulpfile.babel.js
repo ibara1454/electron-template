@@ -1,24 +1,14 @@
 import gulp from 'gulp';
 import babel from 'gulp-babel';
-import webpack from 'webpack-stream';
+import webpack from 'webpack';
+import webpackStream from 'webpack-stream';
+import webpackConfig from './webpack.config.babel';
 import electronCollect from 'electron-connect';
 
 const electron = electronCollect.server.create();
 
 gulp.task('compile:js', () => {
-  return gulp.src('src/app.js')
-    .pipe(webpack({
-      mode: 'development',
-      output: {
-        filename: 'app.js'
-      },
-      module: {
-        rules: [
-          {test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'},
-          {test: /\.vue$/, exclude: /node_modules/, loader: 'vue-loader'}
-        ]
-      }
-    }))
+  return webpackStream(webpackConfig, webpack)
     .pipe(gulp.dest('dist'));
 });
 
@@ -27,15 +17,15 @@ gulp.task('copy:html', () => {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('copy:setting', () => {
-  return gulp.src('src/main.js', {base: 'src'})
+gulp.task('copy:entry', () => {
+  return gulp.src('src/index.js', {base: 'src'})
     .pipe(babel({
       presets: ['@babel/env']
     }))
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('copy', gulp.parallel('copy:html', 'copy:setting'));
+gulp.task('copy', gulp.parallel('copy:html', 'copy:entry'));
 
 gulp.task('compile', gulp.task('compile:js'));
 
@@ -49,8 +39,8 @@ gulp.task('electron:restart', (done) => {
   done();
 });
 
-gulp.task('watch:setting', () => {
-  gulp.watch('src/main.js', gulp.series('copy:setting', 'electron:restart'));
+gulp.task('watch:entry', () => {
+  gulp.watch('src/index.js', gulp.series('copy:entry', 'electron:restart'));
 });
 
 gulp.task('watch:html', () => {
@@ -58,13 +48,13 @@ gulp.task('watch:html', () => {
 });
 
 gulp.task('watch:js', () => {
-  gulp.watch(['src/app.js', 'components/**/*.vue'],
+  gulp.watch(['!src/index.js', 'src/**/*.js', 'src/components/**/*.vue'],
     gulp.series('compile:js', 'electron:reload')
   );
 });
 
 gulp.task('watch',
-  gulp.parallel('watch:html', 'watch:setting', 'watch:js')
+  gulp.parallel('watch:html', 'watch:entry', 'watch:js')
 );
 
 gulp.task('server', (done) => {

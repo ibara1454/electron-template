@@ -1,18 +1,9 @@
 /**
- * Setting file of electron
+ * Entry point of SPA
  */
+import Vue from 'vue';
+import App from './components/App.vue';
 
-'use strict';
-
-import {app, BrowserWindow} from 'electron';
-
-app.on('ready', () => {
-  let window = new BrowserWindow({
-    nodeIntegration: false,
-    width: 800,
-    height: 600
-  });
-  window.loadURL(`file://${__dirname}/index.html`);
-});
-
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+window.onload = () => {
+  new Vue(App).$mount('#app');
+};

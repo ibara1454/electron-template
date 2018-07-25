@@ -2,7 +2,7 @@
   "name": "electron-template",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {},
   "author": "ibara1454",
   "license": "MIT",
