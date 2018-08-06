@@ -1,5 +1,7 @@
 import gulp from 'gulp';
 import babel from 'gulp-babel';
+import gulpif from 'gulp-if';
+import useref from 'gulp-useref';
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
 import webpackConfig from './webpack.config.babel';
@@ -7,14 +9,20 @@ import electronCollect from 'electron-connect';
 
 const electron = electronCollect.server.create();
 
+const mode = process.env.NODE_ENV || 'development';
+const isProd = mode === 'production';
+
 gulp.task('compile:js', () => {
+  // Sets `mode` to given mode
+  webpackConfig.mode = mode;
   return webpackStream(webpackConfig, webpack)
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('copy:html', () => {
   return gulp.src('src/**/*.html', {base: 'src'})
-    .pipe(gulp.dest('dist'));
+    .pipe(gulpif(isProd, useref()))
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('copy:entry', () => {
@@ -22,7 +30,7 @@ gulp.task('copy:entry', () => {
     .pipe(babel({
       presets: ['@babel/env']
     }))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('copy', gulp.parallel('copy:html', 'copy:entry'));
@@ -64,4 +72,6 @@ gulp.task('server', (done) => {
 
 gulp.task('build', gulp.parallel('compile', 'copy'));
 
-gulp.task('default', gulp.series('build', 'server', 'watch'));
+gulp.task('build:watch', gulp.series('build', 'server', 'watch'));
+
+gulp.task('default', gulp.task('build'));

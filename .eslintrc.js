@@ -15,5 +15,8 @@ module.exports = {
         'no-console': 'off',
         'comma-dangle': 0
     },
-
+    "env": {
+        "browser": true,
+        "node": true
+    }
 };

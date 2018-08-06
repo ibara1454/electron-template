@@ -1,9 +1,23 @@
 {
   "name": "electron-template",
   "version": "0.0.1",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {},
+  "description": "an electron template using vue.js",
+  "main": "build/index.js",
+  "scripts": {
+    "build:dev": "cross-env NODE_ENV=development gulp",
+    "build:prod": "cross-env NODE_ENV=production gulp",
+    "start": "cross-env NODE_ENV=development gulp build:watch",
+    "package": "cross-env NODE_ENV=production gulp && electron-builder",
+    "clean": "rimraf dist build"
+  },
+  "build": {
+    "appId": "com.electron.template",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ]
+  },
   "author": "ibara1454",
   "license": "MIT",
   "devDependencies": {
@@ -16,13 +30,18 @@
     "@babel/runtime": "^7.0.0-beta.49",
     "babel-loader": "^8.0.0-beta.3",
     "clean-webpack-plugin": "^0.1.19",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "electron": "^2.0.5",
+    "electron-builder": "^20.26.1",
     "electron-connect": "^0.6.3",
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0-beta.2",
+    "gulp-if": "^2.0.2",
+    "gulp-useref": "^3.1.5",
+    "rimraf": "^2.6.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-loader": "^14.2.2",

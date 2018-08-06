@@ -15,4 +15,6 @@ app.on('ready', () => {
   window.loadURL(`file://${__dirname}/main.html`);
 });
 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+app.on('window-all-closed', function() {
+  app.quit();
+});
